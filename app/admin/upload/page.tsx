@@ -4,6 +4,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import { uploadArtwork } from "@/app/actions/artwork";
 import TagInput from "@/app/components/TagInput";
+import RichTextEditor from "@/app/components/RichTextEditor";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 

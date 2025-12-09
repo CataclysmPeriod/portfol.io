@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  // url removed as per Prisma 7 config
+  url      = env("DATABASE_URL")
 }
 
 model User {

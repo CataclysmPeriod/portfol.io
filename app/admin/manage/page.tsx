@@ -24,7 +24,8 @@ export default async function ManagePage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {artworks.map((artwork) => (
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        {artworks.map((artwork: any) => (
           <div key={artwork.id} className="group relative border border-white/10 rounded-lg overflow-hidden bg-white/5">
             <div className="aspect-[4/3] relative">
               <Image
@@ -48,7 +49,8 @@ export default async function ManagePage() {
             <div className="p-4">
               <h3 className="font-bold truncate">{artwork.title}</h3>
               <div className="flex gap-2 mt-2 overflow-hidden">
-                {artwork.tags.slice(0, 3).map(({ tag }) => (
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {artwork.tags.slice(0, 3).map(({ tag }: any) => (
                     <span key={tag.id} className="text-xs text-white/50 border border-white/20 px-2 py-0.5 rounded-full">
                         {tag.name}
                     </span>

@@ -22,7 +22,8 @@ export default async function UserProfile({ params }: { params: Promise<{ userna
   const totalArtworks = artworks.length;
   // Get unique tags used by this user
   const userTagIds = new Set<string>();
-  artworks.forEach(a => a.tags.forEach(t => userTagIds.add(t.tag.name)));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  artworks.forEach((a: any) => a.tags.forEach((t: any) => userTagIds.add(t.tag.name)));
   const uniqueTags = Array.from(userTagIds);
 
   return (

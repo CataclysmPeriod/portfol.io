@@ -14,22 +14,18 @@ interface HeroProps {
   tags: Tag[];
   onSelectTag: (tag: string) => void;
   selectedTags: string[];
+  isMultiSelect?: boolean;
+  onToggleMultiSelect?: () => void;
 }
 
-export default function Hero({ tags, onSelectTag, selectedTags }: HeroProps) {
+export default function Hero({ tags, onSelectTag, selectedTags, isMultiSelect = true, onToggleMultiSelect }: HeroProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // If tags are selected, the Hero collapses into a header (handled by parent layout state usually, 
-  // but here we are designing the component behavior).
-  // Actually, per plan, clicking a tag transitions the view.
-  
   const isCompact = selectedTags.length > 0;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-       // Search for user/artist
-       // For now, let's just log or redirect
        console.log("Searching for user:", searchQuery);
     }
   };
@@ -95,12 +91,17 @@ export default function Hero({ tags, onSelectTag, selectedTags }: HeroProps) {
                       </button>
                   ))}
 
-                  {/* Add more tags toggle or dropdown could go here */}
-                  <div className="ml-auto flex items-center gap-2">
-                       {/* Multi-select toggle placeholder */}
-                       <span className="text-xs text-white/50">multi-select on</span>
-                       <div className="w-8 h-4 bg-cyan/20 rounded-full relative cursor-pointer">
-                            <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-cyan rounded-full"></div>
+                  {/* Multi-select toggle */}
+                  <div className="ml-auto flex items-center gap-2 cursor-pointer select-none" onClick={onToggleMultiSelect}>
+                       <span className="text-xs text-white/50">{isMultiSelect ? "multi-select on" : "multi-select off"}</span>
+                       <div className={clsx(
+                           "w-8 h-4 rounded-full relative transition-colors",
+                           isMultiSelect ? "bg-cyan/20" : "bg-white/10"
+                       )}>
+                            <div className={clsx(
+                                "absolute top-0.5 w-3 h-3 rounded-full transition-all",
+                                isMultiSelect ? "right-0.5 bg-cyan" : "left-0.5 bg-white/50"
+                            )}></div>
                        </div>
                   </div>
               </div>
@@ -112,16 +113,17 @@ export default function Hero({ tags, onSelectTag, selectedTags }: HeroProps) {
 
 function FloatingTag({ tag, onClick }: { tag: Tag, onClick: () => void }) {
     // Randomize initial position
-    // Use lazy initialization to set random values on mount/hydration
-    const [config] = useState(() => { 
-        if (typeof window === 'undefined') return { x: 0, y: 0, durX: 20, durY: 15 };
-        return {
+    // Use useEffect to ensure client-side only randomization (avoids hydration mismatch)
+    const [config, setConfig] = useState({ x: 0, y: 0, durX: 20, durY: 15 });
+
+    useEffect(() => {
+        setConfig({
             x: Math.random() * 80 - 40, 
             y: Math.random() * 80 - 40,
             durX: 20 + Math.random() * 10,
             durY: 15 + Math.random() * 10
-        };
-    });
+        });
+    }, []);
 
     // Size based on count (logarithmic scale usually better)
     const size = Math.min(1.5, 1 + Math.log(tag.count + 1) * 0.1);

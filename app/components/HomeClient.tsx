@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Hero from "@/app/components/Hero";
 import Gallery from "@/app/components/Gallery";
 import { getArtworks } from "@/app/actions/artwork";
@@ -9,30 +9,48 @@ import { getArtworks } from "@/app/actions/artwork";
 export default function Home({ initialTags, initialArtworks }: { initialTags: any[], initialArtworks: any[] }) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [artworks, setArtworks] = useState(initialArtworks);
+  const [isMultiSelect, setIsMultiSelect] = useState(true);
 
-  // Effect to refetch when tags change
-  // Note: simpler to just do client side filtering for the prototype if we pass all artworks, 
-  // but "getArtworks" supports filtering.
-  // Let's implement a quick fetch.
-  
   const fetchFiltered = async (tags: string[]) => {
-      // Find IDs for these tags
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const tagIds = initialTags.filter((t: any) => tags.includes(t.name)).map((t: any) => t.id);
       const res = await getArtworks({ tagIds: tagIds.length ? tagIds : undefined });
       setArtworks(res);
   }
 
-  // Hook into state change
   const onTagToggle = (tag: string) => {
       const isSelected = selectedTags.includes(tag);
-      const newTags = isSelected 
-        ? selectedTags.filter(t => t !== tag)
-        : [...selectedTags, tag];
+      let newTags: string[];
+
+      if (isMultiSelect) {
+          // In multi-select, we toggle
+          newTags = isSelected 
+            ? selectedTags.filter(t => t !== tag)
+            : [...selectedTags, tag];
+      } else {
+          // In single select, clicking a new tag replaces selection
+          // Clicking the same tag toggles it off
+          newTags = isSelected ? [] : [tag];
+      }
       
       setSelectedTags(newTags);
       fetchFiltered(newTags);
   };
+
+  // Scroll to top revert logic
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+        // If scrolling UP (deltaY < 0) and at TOP (scrollY === 0) and in COMPACT mode
+        // -10 is a threshold to avoid accidental micro-scrolls
+        if (e.deltaY < -10 && window.scrollY === 0 && selectedTags.length > 0) {
+            setSelectedTags([]); 
+            fetchFiltered([]);
+        }
+    };
+
+    window.addEventListener('wheel', handleWheel);
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [selectedTags]);
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -40,6 +58,8 @@ export default function Home({ initialTags, initialArtworks }: { initialTags: an
         tags={initialTags} 
         onSelectTag={onTagToggle} 
         selectedTags={selectedTags}
+        isMultiSelect={isMultiSelect}
+        onToggleMultiSelect={() => setIsMultiSelect(!isMultiSelect)}
       />
       
       {(selectedTags.length > 0) && (
@@ -48,12 +68,6 @@ export default function Home({ initialTags, initialArtworks }: { initialTags: an
           </div>
       )}
       
-      {/* Show all gallery if scroll down? Or just when searched? 
-          The design implies the Hero *is* the page until interaction.
-          But usually a portfolio shows recent works below. 
-          Let's show artworks if tags selected OR just recent ones if scrolled?
-          Ref image 6 shows "Visitor - Main Page (with artworks)" implies they appear below.
-      */}
       {selectedTags.length === 0 && (
           <div className="flex-1 bg-navy relative z-0 mt-[20vh]">
               <div className="text-center text-white/30 text-sm mb-8">

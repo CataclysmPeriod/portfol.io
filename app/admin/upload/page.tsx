@@ -1,16 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import { uploadArtwork } from "@/app/actions/artwork";
 import TagInput from "@/app/components/TagInput";
 import RichTextEditor from "@/app/components/RichTextEditor";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-import "react-quill/dist/quill.snow.css";
 
 export default function UploadPage() {
   const [title, setTitle] = useState("");
@@ -99,14 +94,10 @@ export default function UploadPage() {
 
           <div className="space-y-2">
             <label className="text-sm font-medium">artwork description*</label>
-            <div className="bg-white text-black rounded overflow-hidden">
-                <ReactQuill 
-                    theme="snow" 
-                    value={description} 
-                    onChange={setDescription} 
-                    className="h-48 mb-12" // mb-12 to make space for toolbar
-                />
-            </div>
+            <RichTextEditor
+                value={description}
+                onChange={setDescription}
+            />
           </div>
 
           <div className="space-y-2 pt-8">

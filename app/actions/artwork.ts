@@ -76,6 +76,7 @@ export async function uploadArtwork(formData: FormData) {
 }
 
 export async function getArtworks(filter?: { userId?: string; tagIds?: string[] }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
 
   if (filter?.userId) {

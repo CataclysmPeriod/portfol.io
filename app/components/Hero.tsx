@@ -44,7 +44,7 @@ export default function Hero({ tags, onSelectTag, selectedTags }: HeroProps) {
           "absolute inset-0 overflow-hidden pointer-events-none transition-opacity duration-500",
           isCompact ? "opacity-0" : "opacity-100"
       )}>
-        {tags.map((tag, i) => (
+      {tags.map((tag) => (
           <FloatingTag 
             key={tag.id} 
             tag={tag} 

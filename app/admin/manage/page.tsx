@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
-import { getArtworks, deleteArtwork } from "@/app/actions/artwork";
+import { getArtworks } from "@/app/actions/artwork";
 import Image from "next/image";
 import Link from "next/link";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import DeleteButton from "@/app/components/DeleteButton";
 
 export default async function ManagePage() {

@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { getArtworks } from "@/app/actions/artwork";
 import Gallery from "@/app/components/Gallery";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 
 export default async function UserProfile({ params }: { params: Promise<{ username: string }> }) {

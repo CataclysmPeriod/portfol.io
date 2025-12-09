@@ -121,12 +121,12 @@ function FloatingTag({ tag, onClick }: { tag: Tag, onClick: () => void }) {
     
     useEffect(() => {
         // Hydration safe random init
-        setConfig({
-            x: Math.random() * 80 - 40, // percentage offset
-            y: Math.random() * 80 - 40,
-            durX: 20 + Math.random() * 10,
-            durY: 15 + Math.random() * 10
-        })
+        const x = Math.random() * 80 - 40;
+        const y = Math.random() * 80 - 40;
+        const durX = 20 + Math.random() * 10;
+        const durY = 15 + Math.random() * 10;
+        
+        setConfig({ x, y, durX, durY });
     }, []);
 
     // Size based on count (logarithmic scale usually better)

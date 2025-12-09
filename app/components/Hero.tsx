@@ -120,6 +120,7 @@ function FloatingTag({ tag, onClick }: { tag: Tag, onClick: () => void }) {
     });
     
     useEffect(() => {
+        // Hydration safe random init
         setConfig({
             x: Math.random() * 80 - 40, // percentage offset
             y: Math.random() * 80 - 40,

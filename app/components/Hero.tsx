@@ -2,8 +2,6 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
 import { clsx } from "clsx";
 
 interface Tag {
@@ -20,7 +18,6 @@ interface HeroProps {
 
 export default function Hero({ tags, onSelectTag, selectedTags }: HeroProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
 
   // If tags are selected, the Hero collapses into a header (handled by parent layout state usually, 
   // but here we are designing the component behavior).
@@ -51,7 +48,6 @@ export default function Hero({ tags, onSelectTag, selectedTags }: HeroProps) {
           <FloatingTag 
             key={tag.id} 
             tag={tag} 
-            index={i} 
             onClick={() => onSelectTag(tag.name)}
           />
         ))}

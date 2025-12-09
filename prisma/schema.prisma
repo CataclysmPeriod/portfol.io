@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  // url removed as per Prisma 7 config
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String    // Hashed password for credentials auth
+  name      String?
+  username  String    @unique
+  artworks  Artwork[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Artwork {
+  id          String       @id @default(cuid())
+  title       String
+  description String       // HTML content
+  imageUrl    String
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  tags        ArtworkTag[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  name      String       @unique
+  count     Int          @default(0) // Cache for popularity sorting
+  artworks  ArtworkTag[]
+}
+
+model ArtworkTag {
+  artworkId String
+  tagId     String
+  artwork   Artwork @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([artworkId, tagId])
+}

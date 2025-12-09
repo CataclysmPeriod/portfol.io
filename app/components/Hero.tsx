@@ -112,22 +112,16 @@ export default function Hero({ tags, onSelectTag, selectedTags }: HeroProps) {
 
 function FloatingTag({ tag, onClick }: { tag: Tag, onClick: () => void }) {
     // Randomize initial position
-    const [config, setConfig] = useState({ 
-        x: 0, 
-        y: 0,
-        durX: 20,
-        durY: 15
+    // Use lazy initialization to set random values on mount/hydration
+    const [config] = useState(() => { 
+        if (typeof window === 'undefined') return { x: 0, y: 0, durX: 20, durY: 15 };
+        return {
+            x: Math.random() * 80 - 40, 
+            y: Math.random() * 80 - 40,
+            durX: 20 + Math.random() * 10,
+            durY: 15 + Math.random() * 10
+        };
     });
-    
-    useEffect(() => {
-        // Hydration safe random init
-        const x = Math.random() * 80 - 40;
-        const y = Math.random() * 80 - 40;
-        const durX = 20 + Math.random() * 10;
-        const durY = 15 + Math.random() * 10;
-        
-        setConfig({ x, y, durX, durY });
-    }, []);
 
     // Size based on count (logarithmic scale usually better)
     const size = Math.min(1.5, 1 + Math.log(tag.count + 1) * 0.1);

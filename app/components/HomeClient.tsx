@@ -5,41 +5,19 @@ import Hero from "@/app/components/Hero";
 import Gallery from "@/app/components/Gallery";
 import { getArtworks } from "@/app/actions/artwork";
 
-export default function Home({ initialTags, initialArtworks }: any) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function Home({ initialTags, initialArtworks }: { initialTags: any[], initialArtworks: any[] }) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [artworks, setArtworks] = useState(initialArtworks);
-
-  const handleSelectTag = async (tag: string) => {
-    let newTags;
-    if (selectedTags.includes(tag)) {
-        newTags = selectedTags.filter(t => t !== tag);
-    } else {
-        // Multi-select logic is default per user request update
-        newTags = [...selectedTags, tag];
-    }
-    
-    setSelectedTags(newTags);
-    
-    // In a real app we might fetch new artworks here via server action or API
-    // For this prototype, let's assume we filter or fetch. 
-    // Fetching is safer for large datasets.
-    // However, since `getArtworks` is a server action, we can't easily call it directly inside render without useEffect or transition.
-    // Let's rely on a client-side filter of the initialArtworks for speed if dataset small, 
-    // BUT correctly we should refetch.
-  };
 
   // Effect to refetch when tags change
   // Note: simpler to just do client side filtering for the prototype if we pass all artworks, 
   // but "getArtworks" supports filtering.
   // Let's implement a quick fetch.
   
-  const [loading, setLoading] = useState(false);
-  
-  // Actually, let's use the active tags to filter the displayed artworks from the ones we have, 
-  // or fetch fresh ones. Given "multi-user platform" scale, we must fetch.
-  
   const fetchFiltered = async (tags: string[]) => {
       // Find IDs for these tags
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const tagIds = initialTags.filter((t: any) => tags.includes(t.name)).map((t: any) => t.id);
       const res = await getArtworks({ tagIds: tagIds.length ? tagIds : undefined });
       setArtworks(res);

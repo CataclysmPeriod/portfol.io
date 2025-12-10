@@ -4,13 +4,13 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import cloudinary from "@/lib/cloudinary";
+import { Readable } from "stream";
 
 const ArtworkSchema = z.object({
   title: z.string().min(1),
   description: z.string(),
-  tags: z.array(z.string()), // Array of tag names
+  tags: z.array(z.string()),
 });
 
 export async function uploadArtwork(formData: FormData) {
@@ -30,15 +30,26 @@ export async function uploadArtwork(formData: FormData) {
     const tags = JSON.parse(tagsJson) as string[];
     const validatedData = ArtworkSchema.parse({ title, description, tags });
 
-    // Save file
+    // Upload to Cloudinary
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    
-    await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, filename), buffer);
-    const imageUrl = `/uploads/${filename}`;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const uploadResult = await new Promise<any>((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "portfolio_uploads" },
+            (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+            }
+        );
+        const readable = new Readable();
+        readable.push(buffer);
+        readable.push(null);
+        readable.pipe(stream);
+    });
+
+    const imageUrl = uploadResult.secure_url;
 
     // Create DB Entry
     const artwork = await db.artwork.create({

@@ -5,13 +5,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "res.cloudinary.com",
       },
     ],
-    // For local development uploads
-    unoptimized: true, 
   },
-  // Fix for bcrypt in server components if needed, though usually handled by environment
   serverExternalPackages: ["bcryptjs"],
 };
 

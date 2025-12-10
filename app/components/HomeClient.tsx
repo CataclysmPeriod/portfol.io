@@ -36,25 +36,9 @@ export default function Home({ initialTags, initialArtworks }: { initialTags: an
   };
 
   const resetFilters = async () => {
+       setSelectedTags([]);
        const res = await getArtworks({});
        setArtworks(res);
-  };
-      const isSelected = selectedTags.includes(tag);
-      let newTags: string[];
-
-      if (isMultiSelect) {
-          // In multi-select, we toggle
-          newTags = isSelected 
-            ? selectedTags.filter(t => t !== tag)
-            : [...selectedTags, tag];
-      } else {
-          // In single select, clicking a new tag replaces selection
-          // Clicking the same tag toggles it off
-          newTags = isSelected ? [] : [tag];
-      }
-      
-      setSelectedTags(newTags);
-      fetchFiltered(newTags);
   };
 
   // Scroll to top revert logic
@@ -63,13 +47,13 @@ export default function Home({ initialTags, initialArtworks }: { initialTags: an
         // If scrolling UP (deltaY < 0) and at TOP (scrollY === 0) and in COMPACT mode
         // -10 is a threshold to avoid accidental micro-scrolls
         if (e.deltaY < -10 && window.scrollY === 0 && selectedTags.length > 0) {
-            setSelectedTags([]); 
-            fetchFiltered([]);
+            resetFilters();
         }
     };
 
     window.addEventListener('wheel', handleWheel);
     return () => window.removeEventListener('wheel', handleWheel);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTags]);
 
   return (

@@ -33,7 +33,8 @@ export default function Gallery({ artworks }: GalleryProps) {
                     alt={artwork.title}
                     width={500}
                     height={500} // Aspect ratio handled by CSS usually, but NextImage needs dims. We'll use style.
-                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105 select-none"
+                    onContextMenu={(e) => e.preventDefault()}
                 />
                 
                 {/* Hover Overlay */}
@@ -74,7 +75,8 @@ export default function Gallery({ artworks }: GalleryProps) {
                         src={activeArtwork.imageUrl}
                         alt={activeArtwork.title}
                         fill
-                        className="object-contain"
+                        className="object-contain select-none"
+                        onContextMenu={(e) => e.preventDefault()}
                       />
                   </div>
 

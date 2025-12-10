@@ -35,8 +35,8 @@ export default function Hero({ tags, onSelectTag, selectedTags, isMultiSelect = 
         "relative w-full transition-all duration-700 ease-in-out z-10",
         isCompact ? "h-20 border-b border-white/10" : "h-screen flex flex-col items-center justify-center"
     )}>
-      <a href="/admin" className="fixed top-4 right-4 z-50 text-xs text-white/10 hover:text-white/50 transition-colors uppercase tracking-widest">
-          Login
+      <a href="/admin" className="fixed top-6 right-8 z-50 px-4 py-2 rounded-full border border-cyan/30 bg-navy/80 text-cyan text-xs font-mono hover:bg-cyan/10 hover:border-cyan transition-all backdrop-blur-sm shadow-[0_0_10px_rgba(0,194,255,0.1)]">
+          [ admin_login ]
       </a>
 
       {/* Floating Background Tags */}

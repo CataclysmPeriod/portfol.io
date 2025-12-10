@@ -18,6 +18,11 @@ export default function Home({ initialTags, initialArtworks }: { initialTags: an
       setArtworks(res);
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+      // Intentionally empty dependency to only run on mount if needed or manual triggers
+  }, []);
+
   const onTagToggle = (tag: string) => {
       const isSelected = selectedTags.includes(tag);
       let newTags: string[];

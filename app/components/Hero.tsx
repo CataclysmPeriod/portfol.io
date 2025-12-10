@@ -117,6 +117,7 @@ function FloatingTag({ tag, onClick }: { tag: Tag, onClick: () => void }) {
     const [config, setConfig] = useState({ x: 0, y: 0, durX: 20, durY: 15 });
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setConfig({
             x: Math.random() * 80 - 40, 
             y: Math.random() * 80 - 40,

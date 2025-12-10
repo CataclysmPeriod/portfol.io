@@ -35,6 +35,10 @@ export default function Hero({ tags, onSelectTag, selectedTags, isMultiSelect = 
         "relative w-full transition-all duration-700 ease-in-out z-10",
         isCompact ? "h-20 border-b border-white/10" : "h-screen flex flex-col items-center justify-center"
     )}>
+      <a href="/admin" className="fixed top-4 right-4 z-50 text-xs text-white/10 hover:text-white/50 transition-colors uppercase tracking-widest">
+          Login
+      </a>
+
       {/* Floating Background Tags */}
       <div className={clsx(
           "absolute inset-0 overflow-hidden pointer-events-none transition-opacity duration-500",

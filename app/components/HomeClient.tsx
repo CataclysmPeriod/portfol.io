@@ -11,19 +11,34 @@ export default function Home({ initialTags, initialArtworks }: { initialTags: an
   const [artworks, setArtworks] = useState(initialArtworks);
   const [isMultiSelect, setIsMultiSelect] = useState(true);
 
-  const fetchFiltered = async (tags: string[]) => {
+  const onTagToggle = async (tag: string) => {
+      const isSelected = selectedTags.includes(tag);
+      let newTags: string[];
+
+      if (isMultiSelect) {
+          // In multi-select, we toggle
+          newTags = isSelected 
+            ? selectedTags.filter(t => t !== tag)
+            : [...selectedTags, tag];
+      } else {
+          // In single select, clicking a new tag replaces selection
+          // Clicking the same tag toggles it off
+          newTags = isSelected ? [] : [tag];
+      }
+      
+      setSelectedTags(newTags);
+      
+      // Fetch filtered
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const tagIds = initialTags.filter((t: any) => tags.includes(t.name)).map((t: any) => t.id);
+      const tagIds = initialTags.filter((t: any) => newTags.includes(t.name)).map((t: any) => t.id);
       const res = await getArtworks({ tagIds: tagIds.length ? tagIds : undefined });
       setArtworks(res);
-  }
+  };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-      // Intentionally empty dependency to only run on mount if needed or manual triggers
-  }, []);
-
-  const onTagToggle = (tag: string) => {
+  const resetFilters = async () => {
+       const res = await getArtworks({});
+       setArtworks(res);
+  };
       const isSelected = selectedTags.includes(tag);
       let newTags: string[];
 

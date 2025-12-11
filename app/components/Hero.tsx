@@ -15,19 +15,17 @@ interface HeroProps {
   onSelectTag: (tag: string) => void;
   selectedTags: string[];
   isMultiSelect?: boolean;
-  onToggleMultiSelect?: () => void;
+  onSearch: (query: string) => void; // New Prop
 }
 
-export default function Hero({ tags, onSelectTag, selectedTags, isMultiSelect = true, onToggleMultiSelect }: HeroProps) {
+export default function Hero({ tags, onSelectTag, selectedTags, onSearch }: HeroProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const isCompact = selectedTags.length > 0;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-       console.log("Searching for user:", searchQuery);
-    }
+    onSearch(searchQuery);
   };
 
   return (
@@ -44,10 +42,11 @@ export default function Hero({ tags, onSelectTag, selectedTags, isMultiSelect = 
           "absolute inset-0 overflow-hidden pointer-events-none transition-opacity duration-500",
           isCompact ? "opacity-0" : "opacity-100"
       )}>
-      {tags.map((tag) => (
+      {tags.map((tag, i) => (
           <FloatingTag 
             key={tag.id} 
             tag={tag} 
+            index={i}
             onClick={() => onSelectTag(tag.name)}
           />
         ))}
@@ -78,13 +77,10 @@ export default function Hero({ tags, onSelectTag, selectedTags, isMultiSelect = 
         )}
       </AnimatePresence>
 
-      {/* Compact Header View of Selected Tags */}
+      {/* Compact Header View of Selected Tags (Only tags, controls moved to Global Header) */}
       {isCompact && (
-          <div className="absolute inset-0 flex items-center px-8 z-30">
-              <div className="flex items-center gap-4 overflow-x-auto no-scrollbar w-full">
-                  <span className="text-cyan font-bold whitespace-nowrap">portfol.io</span>
-                  <div className="h-6 w-px bg-white/20 mx-2"></div>
-                  
+          <div className="absolute inset-0 flex items-center px-8 z-30 justify-center">
+              <div className="flex items-center gap-4 overflow-x-auto no-scrollbar max-w-4xl">
                   {selectedTags.map(tag => (
                       <button 
                         key={tag}
@@ -94,20 +90,6 @@ export default function Hero({ tags, onSelectTag, selectedTags, isMultiSelect = 
                         {tag} <span className="hidden group-hover:inline ml-1">×</span>
                       </button>
                   ))}
-
-                  {/* Multi-select toggle */}
-                  <div className="ml-auto flex items-center gap-2 cursor-pointer select-none" onClick={onToggleMultiSelect}>
-                       <span className="text-xs text-white/50">{isMultiSelect ? "multi-select on" : "multi-select off"}</span>
-                       <div className={clsx(
-                           "w-8 h-4 rounded-full relative transition-colors",
-                           isMultiSelect ? "bg-cyan/20" : "bg-white/10"
-                       )}>
-                            <div className={clsx(
-                                "absolute top-0.5 w-3 h-3 rounded-full transition-all",
-                                isMultiSelect ? "right-0.5 bg-cyan" : "left-0.5 bg-white/50"
-                            )}></div>
-                       </div>
-                  </div>
               </div>
           </div>
       )}
@@ -115,7 +97,7 @@ export default function Hero({ tags, onSelectTag, selectedTags, isMultiSelect = 
   );
 }
 
-function FloatingTag({ tag, onClick }: { tag: Tag, onClick: () => void }) {
+function FloatingTag({ tag, onClick, index }: { tag: Tag, onClick: () => void, index: number }) {
     // Randomize initial position
     // Use useEffect to ensure client-side only randomization (avoids hydration mismatch)
     const [config, setConfig] = useState({ x: 0, y: 0, durX: 20, durY: 15 });
@@ -144,19 +126,24 @@ function FloatingTag({ tag, onClick }: { tag: Tag, onClick: () => void }) {
                 y: `${config.y}vh`,
             }}
             transition={{ 
-                duration: 1,
-                // Floating animation loop
+                // Super fast explosion
+                duration: 0.5, 
+                delay: index * 0.02, // Very slight stagger
+                ease: "easeOut",
+                // Floating animation loop (separate from initial appearance)
                 x: {
                     repeat: Infinity,
                     repeatType: "reverse",
                     duration: config.durX,
-                    ease: "easeInOut"
+                    ease: "easeInOut",
+                    delay: 0.5 // Wait for explosion to finish
                 },
                 y: {
                     repeat: Infinity,
                     repeatType: "reverse",
                     duration: config.durY,
-                    ease: "easeInOut"
+                    ease: "easeInOut",
+                    delay: 0.5
                 }
             }}
             whileHover={{ scale: size * 1.1, zIndex: 50, borderColor: "var(--color-cyan)", color: "var(--color-cyan)" }}

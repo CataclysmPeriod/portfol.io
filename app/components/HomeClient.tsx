@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Hero from "@/app/components/Hero";
+import Header from "@/app/components/Header";
 import Gallery from "@/app/components/Gallery";
 import { getArtworks } from "@/app/actions/artwork";
 
@@ -9,7 +10,17 @@ import { getArtworks } from "@/app/actions/artwork";
 export default function Home({ initialTags, initialArtworks }: { initialTags: any[], initialArtworks: any[] }) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [artworks, setArtworks] = useState(initialArtworks);
-  const [isMultiSelect, setIsMultiSelect] = useState(true);
+  const [isMultiSelect, setIsMultiSelect] = useState(false); // Default off as requested
+
+  const fetchArtworks = async (tags: string[], query?: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const tagIds = initialTags.filter((t: any) => tags.includes(t.name)).map((t: any) => t.id);
+      const res = await getArtworks({ 
+          tagIds: tagIds.length ? tagIds : undefined,
+          query: query || undefined
+      });
+      setArtworks(res);
+  }
 
   const onTagToggle = async (tag: string) => {
       const isSelected = selectedTags.includes(tag);
@@ -27,18 +38,16 @@ export default function Home({ initialTags, initialArtworks }: { initialTags: an
       }
       
       setSelectedTags(newTags);
-      
-      // Fetch filtered
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const tagIds = initialTags.filter((t: any) => newTags.includes(t.name)).map((t: any) => t.id);
-      const res = await getArtworks({ tagIds: tagIds.length ? tagIds : undefined });
-      setArtworks(res);
+      fetchArtworks(newTags);
   };
+
+  const onSearch = async (query: string) => {
+      fetchArtworks(selectedTags, query);
+  }
 
   const resetFilters = async () => {
        setSelectedTags([]);
-       const res = await getArtworks({});
-       setArtworks(res);
+       fetchArtworks([]);
   };
 
   // Scroll to top revert logic
@@ -58,12 +67,18 @@ export default function Home({ initialTags, initialArtworks }: { initialTags: an
 
   return (
     <main className="min-h-screen flex flex-col">
+      <Header 
+        isMultiSelect={isMultiSelect} 
+        onToggleMultiSelect={() => setIsMultiSelect(!isMultiSelect)}
+        isCompact={selectedTags.length > 0}
+      />
+
       <Hero 
         tags={initialTags} 
         onSelectTag={onTagToggle} 
         selectedTags={selectedTags}
         isMultiSelect={isMultiSelect}
-        onToggleMultiSelect={() => setIsMultiSelect(!isMultiSelect)}
+        onSearch={onSearch}
       />
       
       {(selectedTags.length > 0) && (

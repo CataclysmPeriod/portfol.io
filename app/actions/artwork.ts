@@ -86,7 +86,7 @@ export async function uploadArtwork(formData: FormData) {
   }
 }
 
-export async function getArtworks(filter?: { userId?: string; tagIds?: string[] }) {
+export async function getArtworks(filter?: { userId?: string; tagIds?: string[], query?: string }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: any = {};
 
@@ -100,6 +100,13 @@ export async function getArtworks(filter?: { userId?: string; tagIds?: string[] 
         tagId: { in: filter.tagIds },
       },
     };
+  }
+
+  if (filter?.query) {
+      where.OR = [
+          { title: { contains: filter.query, mode: 'insensitive' } },
+          { description: { contains: filter.query, mode: 'insensitive' } }
+      ];
   }
 
   return await db.artwork.findMany({

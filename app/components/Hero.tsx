@@ -127,7 +127,7 @@ function FloatingTag({ tag, onClick, index }: { tag: Tag, onClick: () => void, i
             }}
             transition={{ 
                 // Super fast explosion
-                duration: 0.2, 
+                duration: 0.0001, 
                 delay: 0, // Very slight stagger
                 ease: "easeOut",
                 // Floating animation loop (separate from initial appearance)

@@ -45,7 +45,7 @@ export default function Header({ isMultiSelect, onToggleMultiSelect, isCompact }
 
                 {/* Admin Login */}
                 <Link 
-                    href="/admin" 
+                    href="/login" 
                     className="px-4 py-2 rounded-full border border-cyan/30 bg-navy/80 text-cyan text-xs font-mono hover:bg-cyan/10 hover:border-cyan transition-all backdrop-blur-sm shadow-[0_0_10px_rgba(0,194,255,0.1)]"
                 >
                     [ admin_login ]
